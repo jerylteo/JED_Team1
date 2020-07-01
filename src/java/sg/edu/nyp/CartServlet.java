@@ -30,6 +30,9 @@ public class CartServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
+        // retrieve items from sessionStorage
+        int id;
+        
     }
 
     
