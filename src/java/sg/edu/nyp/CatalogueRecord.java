@@ -14,14 +14,24 @@ import javax.ejb.Stateless;
 public class CatalogueRecord {
     private int Itemid;
     private String itemname;
+    private double ppu;
+    private int categoryid;
+    
     public CatalogueRecord(){}
     
-    public int getItemid(String name){
-        if(name==itemname){
-            return Itemid;
-        }
-        else{
-            return 0;
-        }
+    public int getItemid(){
+        return Itemid;
+    }
+    
+    public String getItemname(){
+        return itemname;
+    }
+    
+    public int getCategoryid(){
+        return categoryid;
+    }
+    
+    public double getppu(){
+        return ppu;
     }
 }
