@@ -7,6 +7,14 @@
 package sg.edu.nyp;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -29,9 +37,34 @@ public class CartServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // TODO: replace this with EJB implementation once Yu Ling is done with creation
         
         // retrieve items from sessionStorage
-        int id;
+        Map<Integer, CatalogueRecord> itemMap = new HashMap<Integer, CatalogueRecord>();
+        
+        if (request.getSession().getAttribute("itemMap") != null) {
+            itemMap = (Map) request.getSession().getAttribute("itemMap");
+            
+            double totalPrice = 0;
+            int totalQty = 0;
+            
+            for (int key : itemMap.keySet()) {
+                CatalogueRecord item = itemMap.get(key);
+                System.out.println(item.id + ", qty: " + item.qty);
+                
+                totalPrice += item.ppu * item.qty;
+                totalQty += item.qty;
+            }
+            
+            request.getSession().setAttribute("totalPrice", totalPrice);
+            request.getSession().setAttribute("totalQty", totalQty);
+        }
+        else {
+            // cart should check if null
+            itemMap = null;
+        }
+        
+        response.sendRedirect(this.getServletContext().getContextPath() + "/cart.jsp");
         
     }
 
@@ -40,6 +73,71 @@ public class CartServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
+        CatalogueRecord item = getItem(Integer.parseInt(request.getParameter("itemId")));   // method to retrieve item details from itemId
+        int itemQty = Integer.parseInt(request.getParameter("itemQty"));
+        
+        Map<Integer, CatalogueRecord> itemMap = new HashMap<Integer, CatalogueRecord>();
+        
+        if (request.getSession().getAttribute("itemMap") != null) {
+            itemMap = (Map) request.getSession().getAttribute("itemMap");
+        }
+        
+        // if Map contains item, just add to quantity instead of adding a new item
+        if (itemMap.containsKey(item.id)) {
+            CatalogueRecord temp = itemMap.get(item.id);
+            itemMap.put(item.id, temp);
+        }
+        else {
+            item.qty = itemQty;
+            itemMap.put(item.id, item);
+            request.getSession().setAttribute("cartMsg", "Successfully added item to Cart.");   // Diyanah, this is for your shop page.
+        }
+        
+        System.out.println(itemMap.get(item.id).qty);   //debug, check qty
+        request.getSession().setAttribute("itemMap", itemMap);
+        response.sendRedirect(this.getServletContext().getContextPath() + "/shopping.jsp");
+    }
+    
+    public CatalogueRecord getItem(int itemID) {
+        Connection connection = null;
+        PreparedStatement prepStatement = null;
+        ResultSet resultSet = null;
+        CatalogueRecord item = null;
+        
+        try {
+            connection = dsCart.getConnection();
+            prepStatement = connection.prepareStatement("SELECT * FROM catalogue WHERE itemid = ?");
+            prepStatement.setInt(1, itemID);
+            
+            resultSet = prepStatement.executeQuery();
+            if (resultSet.next()) {
+                item = new CatalogueRecord();
+                item.id = resultSet.getInt(1);
+                item.name = resultSet.getString(3);
+                item.ppu = resultSet.getDouble(4);
+                
+                int categoryId = resultSet.getInt(2);
+                prepStatement = connection.prepareStatement("SELECT * FROM category WHERE id = ?");
+                prepStatement.setInt(1, categoryId);
+                
+                resultSet = prepStatement.executeQuery();
+                if (resultSet.next()) {
+                    item.category = resultSet.getString(2);
+                }
+                
+                return item;
+            }
+            
+            resultSet.close();
+            prepStatement.close();
+            connection.close();
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(CartServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        return item;
     }
 
     

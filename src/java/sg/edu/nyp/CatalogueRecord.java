@@ -5,38 +5,68 @@
  */
 
 package sg.edu.nyp;
-import javax.ejb.Stateless;
-/**
- *
- * @Yuling User
- */
-@Stateless
-public class CatalogueRecord {
-    private int Itemid;
-    private String itemname;
-    private double ppu;
-    private int categoryid;
-    private String description;
-    
-    public CatalogueRecord(){}
-    
-    public int getItemid(){
-        return Itemid;
+
+import java.io.Serializable;
+
+public class CatalogueRecord implements Serializable{
+    public static final long serialVersionUID = -1L;
+    int id;
+    String name;
+    double ppu;             // this is the price per unit. PPU.
+    String category;        // this is linked by catalogue.categoryid to category.id, retrieving 'description' column.
+    int qty;                // this ia added on to specify each item's quantity.
+
+    public CatalogueRecord(int id, String name, double ppu, String category, int qty) {
+        this.id = id;
+        this.name = name;
+        this.ppu = ppu;
+        this.category = category;
+        this.qty = qty;
     }
-    
-    public String getItemname(){
-        return itemname;
+
+    public CatalogueRecord() {
     }
-    
-    public int getCategoryid(){
-        return categoryid;
+
+    public int getId() {
+        return id;
     }
-    
-    public double getppu(){
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getPpu() {
         return ppu;
     }
-    
-    public String getDescription(){
-        return description;
+
+    public void setPpu(double ppu) {
+        this.ppu = ppu;
     }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public int getQty() {
+        return qty;
+    }
+
+    public void setQty(int qty) {
+        this.qty = qty;
+    }
+    
+    
+
 }
