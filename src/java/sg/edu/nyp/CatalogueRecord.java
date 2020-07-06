@@ -16,6 +16,7 @@ public class CatalogueRecord {
     private String itemname;
     private double ppu;
     private int categoryid;
+    private String description;
     
     public CatalogueRecord(){}
     
@@ -33,5 +34,9 @@ public class CatalogueRecord {
     
     public double getppu(){
         return ppu;
+    }
+    
+    public String getDescription(){
+        return description;
     }
 }
