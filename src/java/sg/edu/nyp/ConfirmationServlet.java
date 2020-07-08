@@ -7,6 +7,9 @@ package sg.edu.nyp;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -76,12 +79,23 @@ public class ConfirmationServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
           //Get customer information from the request 
-          String name = request.getParameter("name");
-          String email = request.getParameter("email");
+          String creditcard = request.getParameter("creditcardno");
           
           CreditCardValidator creditcardvalidate = CreditCardValidator.genericCreditCardValidator();
           
-        if(CreditCardValida)
+        if(creditcardvalidate.isValid(creditcard)) {
+            
+            
+            boolean unique = true;
+            
+            //Declare connection, preparedstatement and resultset
+            Connection connection = null;
+            PreparedStatement preparedstatement = null;
+            ResultSet resultset = null;
+            
+           
+            
+        }
           
           
           
