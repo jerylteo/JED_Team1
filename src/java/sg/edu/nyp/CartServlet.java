@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
+import javax.ejb.EJB;
 
 /**
  *
@@ -30,40 +31,22 @@ import javax.sql.DataSource;
 @WebServlet(name = "CartServlet", urlPatterns = {"/cart"})
 public class CartServlet extends HttpServlet {
 
+    @EJB
+    private ItemBean itemBean;
 
-    @Resource(name="jdbc/jed_lab7")
+    @Resource(name="jdbc/jed_team1")
     private DataSource dsCart;
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // TODO: replace this with EJB implementation once Yu Ling is done with creation
-        
         // retrieve items from sessionStorage
-        Map<Integer, CatalogueRecord> itemMap = new HashMap<Integer, CatalogueRecord>();
+        double[] totals = itemBean.getTotals((Map)request.getSession().getAttribute("itemMap"));
         
-        if (request.getSession().getAttribute("itemMap") != null) {
-            itemMap = (Map) request.getSession().getAttribute("itemMap");
-            
-            double totalPrice = 0;
-            int totalQty = 0;
-            
-            for (int key : itemMap.keySet()) {
-                CatalogueRecord item = itemMap.get(key);
-                System.out.println(item.id + ", qty: " + item.qty);
-                
-                totalPrice += item.ppu * item.qty;
-                totalQty += item.qty;
-            }
-            
-            request.getSession().setAttribute("totalPrice", totalPrice);
-            request.getSession().setAttribute("totalQty", totalQty);
-        }
-        else {
-            // cart should check if null
-            itemMap = null;
-        }
-        
+        request.getSession().setAttribute("totalPrice", totals[0]);
+        request.getSession().setAttribute("totalQty", totals[1]);
+
         response.sendRedirect(this.getServletContext().getContextPath() + "/cart.jsp");
         
     }
