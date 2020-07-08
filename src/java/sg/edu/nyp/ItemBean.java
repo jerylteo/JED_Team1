@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -99,8 +101,44 @@ public class ItemBean {
         } catch (SQLException ex) {
             Logger.getLogger(CartServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
+            
         return item;
     }
+    
+    public CatalogueRecord allItems(){
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultset = null;
+        CatalogueRecord item = null;
+        
+        try{
+            connection = dsCart.getConnection();
+            preparedStatement = connection.prepareStatement("SELECT * FROM catalogue");
+            resultset = preparedStatement.executeQuery();
+            
+            while (resultset.next()) {
+                item = new CatalogueRecord();
+                item.id = resultset.getInt(1);
+                item.name = resultset.getString(3);
+                item.ppu = resultset.getDouble(4);
+                int categoryId = resultset.getInt(2);
+                
+                preparedStatement = connection.prepareStatement("SELECT * FROM category WHERE id = ?");
+                preparedStatement.setInt(1, categoryId);
+                resultset = preparedStatement.executeQuery();
+                if (resultset.next()) {
+                    item.category = resultset.getString(2);
+                }
+                
+                return item;
+            }
+            resultset.close();
+            preparedStatement.close();
+            connection.close();
+        }catch (SQLException ex) {
+            Logger.getLogger(CartServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return item;
+    }
+    
 }
