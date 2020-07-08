@@ -11,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.validator.routines.CreditCardValidator;
 
 /**
  *
@@ -70,7 +71,14 @@ public class CheckoutServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+          //Get customer information from the request 
+          String name = request.getParameter("name");
+          String email = request.getParameter("email");
+          
+          CreditCardValidator creditcardvalidate = CreditCardValidator.genericCreditCardValidator();
+          
+          
+          
        
     }
 
