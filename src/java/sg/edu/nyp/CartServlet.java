@@ -54,29 +54,18 @@ public class CartServlet extends HttpServlet {
     
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException {  
         
-        CatalogueRecord item = getItem(Integer.parseInt(request.getParameter("itemId")));   // method to retrieve item details from itemId
-        int itemQty = Integer.parseInt(request.getParameter("itemQty"));
-        
-        Map<Integer, CatalogueRecord> itemMap = new HashMap<Integer, CatalogueRecord>();
+        Map<Integer, CatalogueRecord> itemMap = null;
         
         if (request.getSession().getAttribute("itemMap") != null) {
             itemMap = (Map) request.getSession().getAttribute("itemMap");
-        }
-        
-        // if Map contains item, just add to quantity instead of adding a new item
-        if (itemMap.containsKey(item.id)) {
-            CatalogueRecord temp = itemMap.get(item.id);
-            itemMap.put(item.id, temp);
-        }
-        else {
-            item.qty = itemQty;
-            itemMap.put(item.id, item);
+            
+            itemMap = itemBean.addToCart(itemMap, Integer.parseInt(request.getParameter("itemId")), Integer.parseInt(request.getParameter("itemQty")));
+            
             request.getSession().setAttribute("cartMsg", "Successfully added item to Cart.");   // Diyanah, this is for your shop page.
         }
         
-        System.out.println(itemMap.get(item.id).qty);   //debug, check qty
         request.getSession().setAttribute("itemMap", itemMap);
         response.sendRedirect(this.getServletContext().getContextPath() + "/shopping.jsp");
     }
