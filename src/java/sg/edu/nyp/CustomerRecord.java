@@ -5,11 +5,13 @@
  */
 
 package sg.edu.nyp;
+import java.io.Serializable;
 /**
  *
  * @Yuling User
  */
 public class CustomerRecord {
+    private final long serialVersionUID = -1L;
     private int Customerid;
     private String name;
     private String address;
