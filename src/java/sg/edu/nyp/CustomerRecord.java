@@ -5,12 +5,10 @@
  */
 
 package sg.edu.nyp;
-import javax.ejb.Stateless;
 /**
  *
  * @Yuling User
  */
-@Stateless
 public class CustomerRecord {
     private int Customerid;
     private String name;
