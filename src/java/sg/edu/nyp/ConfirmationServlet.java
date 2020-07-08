@@ -7,7 +7,9 @@ package sg.edu.nyp;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import javax.annotation.Resource;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,8 +19,10 @@ import org.apache.commons.validator.routines.CreditCardValidator;
  *
  * @author LaxRav
  */
-public class CheckoutServlet extends HttpServlet {
-
+@WebServlet("/confirm")
+public class ConfirmationServlet extends HttpServlet {
+    @Resource(name="jdbc/jed")
+    private CatalogueRecord catalogue;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -76,6 +80,9 @@ public class CheckoutServlet extends HttpServlet {
           String email = request.getParameter("email");
           
           CreditCardValidator creditcardvalidate = CreditCardValidator.genericCreditCardValidator();
+          
+        if(CreditCardValida)
+          
           
           
           
