@@ -31,6 +31,7 @@ import javax.ejb.EJB;
 @WebServlet(name = "CartServlet", urlPatterns = {"/cart"})
 public class CartServlet extends HttpServlet {
 
+    // hii
     @EJB
     private ItemBean itemBean;
 
