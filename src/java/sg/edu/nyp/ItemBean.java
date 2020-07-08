@@ -118,16 +118,16 @@ public class ItemBean {
             
             while (resultset.next()) {
                 item = new CatalogueRecord();
-                item.id = resultset.getInt(1);
-                item.name = resultset.getString(3);
-                item.ppu = resultset.getDouble(4);
-                int categoryId = resultset.getInt(2);
+                item.id = resultset.getInt("itemid");
+                int categoryId = resultset.getInt("categoryid");
+                item.name = resultset.getString("item");
+                item.ppu = resultset.getDouble("ppu");
                 
                 preparedStatement = connection.prepareStatement("SELECT * FROM category WHERE id = ?");
                 preparedStatement.setInt(1, categoryId);
                 resultset = preparedStatement.executeQuery();
                 if (resultset.next()) {
-                    item.category = resultset.getString(2);
+                    item.category = resultset.getString("description");
                 }
                 
                 return item;
@@ -136,9 +136,42 @@ public class ItemBean {
             preparedStatement.close();
             connection.close();
         }catch (SQLException ex) {
-            Logger.getLogger(CartServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ShoppingServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
         return item;
     }
     
+    public CatalogueRecord searchItems(String search){
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultset = null;
+        List<CatalogueRecord> results = new ArrayList<CatalogueRecord>();
+        
+        String sqlSelect = "SELECT * FROM catalogue WHERE item LIKE ?";
+         try {
+                connection = dsCart.getConnection();
+                preparedStatement = connection.prepareStatement(sqlSelect);
+                preparedStatement.setString(1, "%" + search + "%");
+                
+                resultset = preparedStatement.executeQuery();
+                
+                while(resultset.next()){
+                    int categoryId = resultset.getInt("categoryid");
+                    preparedStatement = connection.prepareStatement("SELECT * FROM category WHERE id = ?");
+                    preparedStatement.setInt(1, categoryId);
+                    resultset = preparedStatement.executeQuery();
+                    resultset.next();
+                    String category = resultset.getString("description");
+                    
+                    CatalogueRecord items = new CatalogueRecord();
+                    items.setName(resultset.getString("item"));
+                    items.setCategory(category);
+                    items.setPpu(resultset.getDouble("ppu"));
+                    
+                    results.add(items);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ShoppingServlet.class.getName()).log(Level.SEVERE, null, ex);}
+        return (CatalogueRecord) results;
+    }
 }
